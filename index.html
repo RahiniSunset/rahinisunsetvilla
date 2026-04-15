@@ -385,6 +385,536 @@
     .suite-info { padding: 32px 24px; }
     .avail-fields { grid-template-columns: 1fr; }
   }
+  /* ── ROOM SELECTOR CARDS ── */
+  .room-selector { display: flex; flex-direction: column; gap: 10px; margin-bottom: 4px; }
+  .room-sel-card {
+    border: 1.5px solid var(--beige);
+    background: var(--white);
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  .room-sel-card:hover { border-color: var(--gold); background: var(--ivory); }
+  .room-sel-card.selected {
+    border-color: var(--gold);
+    background: var(--ivory);
+    box-shadow: 0 0 0 3px rgba(201,169,110,0.12);
+  }
+  .room-sel-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 14px; right: 16px;
+    width: 22px; height: 22px;
+    background: var(--gold);
+    color: var(--charcoal);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 22px;
+    text-align: center;
+  }
+  .rsc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .rsc-badge {
+    font-family: var(--sans);
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background: var(--forest);
+    color: var(--gold-light);
+    padding: 3px 9px;
+  }
+  .rsc-badge-alt { background: var(--charcoal-mid) !important; }
+  .rsc-price {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--forest);
+    line-height: 1;
+  }
+  .rsc-price span { font-family: var(--sans); font-size: 11px; font-weight: 300; color: var(--text-light); }
+  .rsc-name {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--charcoal);
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .rsc-name span { font-size: 13px; font-weight: 300; font-style: italic; color: var(--text-light); }
+  .rsc-meta { font-family: var(--sans); font-size: 11px; font-weight: 300; color: var(--text-light); letter-spacing: 0.03em; }
+
+  /* ══════════════════════════════════════════════════
+     MMT-STYLE FULL-SCREEN PAYMENT OVERLAY
+  ══════════════════════════════════════════════════ */
+  #payOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(100%);
+    transition: transform 0.55s cubic-bezier(0.32, 0.72, 0, 1);
+    background: #F4F0E8;
+  }
+  #payOverlay.open { transform: translateY(0); }
+
+  /* ── Pay Topbar ── */
+  .pay-topbar {
+    background: var(--charcoal);
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(201,169,110,0.15);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .pay-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .pay-back-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255,255,255,0.6);
+    font-size: 20px;
+    padding: 4px 8px;
+    transition: color 0.3s;
+    line-height: 1;
+  }
+  .pay-back-btn:hover { color: var(--gold); }
+  .pay-topbar-title {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--white);
+    letter-spacing: 0.05em;
+  }
+  .pay-secure-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+  }
+  .pay-secure-dot {
+    width: 7px; height: 7px;
+    background: #2D7A4F;
+    border-radius: 50%;
+    animation: sdBlink 2s ease infinite;
+  }
+  @keyframes sdBlink { 0%,100%{ opacity:1; } 50%{ opacity:0.3; } }
+
+  /* ── Step indicator ── */
+  .pay-steps {
+    background: var(--charcoal-mid);
+    padding: 0 28px;
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    flex-shrink: 0;
+  }
+  .pay-step {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 8px;
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    border-bottom: 2px solid transparent;
+    transition: all 0.4s;
+    cursor: default;
+    position: relative;
+  }
+  .pay-step.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+  .pay-step.done {
+    color: rgba(255,255,255,0.45);
+  }
+  .pay-step-num {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    flex-shrink: 0;
+  }
+  .pay-step.active .pay-step-num { background: var(--gold); color: var(--charcoal); border-color: var(--gold); }
+  .pay-step.done .pay-step-num { background: rgba(255,255,255,0.08); }
+
+  /* ── Pay Body ── */
+  .pay-body {
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .pay-screen { display: none; min-height: 100%; }
+  .pay-screen.active { display: block; }
+
+  /* ── Screen 1: Review ── */
+  .pay-review-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 0;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 36px 28px;
+    gap: 32px;
+  }
+  .pay-card {
+    background: var(--white);
+    border: 1px solid var(--beige);
+    padding: 28px;
+    margin-bottom: 16px;
+  }
+  .pay-card-title {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--charcoal);
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--cream);
+    letter-spacing: 0.02em;
+  }
+  .pay-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--cream);
+  }
+  .pay-detail-row:last-child { border-bottom: none; }
+  .pay-detail-key {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-light);
+  }
+  .pay-detail-val {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--charcoal);
+    text-align: right;
+    max-width: 55%;
+  }
+  .pay-price-breakdown { margin-top: 4px; }
+  .pay-price-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--text-mid);
+    border-bottom: 1px solid var(--cream);
+  }
+  .pay-price-row:last-child { border-bottom: none; }
+  .pay-price-row.total {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--charcoal);
+    padding-top: 16px;
+    border-top: 2px solid var(--charcoal);
+    border-bottom: none;
+  }
+  .pay-price-row.today {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--forest);
+  }
+  .pay-amt-due-box {
+    background: var(--forest);
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+  }
+  .pay-amt-label { font-family: var(--sans); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.5); }
+  .pay-amt-val { font-family: var(--serif); font-size: 32px; font-weight: 400; color: var(--white); }
+  .pay-amt-note { font-family: var(--sans); font-size: 10px; font-weight: 300; color: rgba(255,255,255,0.4); margin-top: 3px; }
+  .pay-proceed-btn {
+    width: 100%;
+    background: var(--gold);
+    color: var(--charcoal);
+    border: none;
+    padding: 19px;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .pay-proceed-btn:hover { background: var(--gold-light); transform: translateY(-1px); box-shadow: 0 10px 32px rgba(201,169,110,0.3); }
+  .pay-trust-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    justify-content: center;
+  }
+  .pay-trust-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: var(--text-light);
+  }
+
+  /* ── Screen 2: Payment ── */
+  .pay-method-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 0;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 28px;
+    gap: 24px;
+  }
+  .pay-method-sidebar {}
+  .pay-method-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 16px;
+    border: 1px solid var(--beige);
+    background: var(--white);
+    cursor: pointer;
+    transition: all 0.25s;
+    margin-bottom: 6px;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-mid);
+    letter-spacing: 0.05em;
+  }
+  .pay-method-option:hover { border-color: var(--gold); color: var(--charcoal); }
+  .pay-method-option.active {
+    border-color: var(--gold);
+    background: var(--ivory);
+    color: var(--forest);
+    font-weight: 500;
+    border-left: 3px solid var(--gold);
+  }
+  .pay-method-icon {
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+    background: var(--cream);
+  }
+  .pay-method-content { background: var(--white); border: 1px solid var(--beige); padding: 28px; }
+  .pay-method-pane { display: none; }
+  .pay-method-pane.active { display: block; }
+  .pm-title { font-family: var(--serif); font-size: 22px; font-weight: 400; color: var(--charcoal); margin-bottom: 6px; }
+  .pm-sub { font-family: var(--sans); font-size: 12px; font-weight: 300; color: var(--text-light); letter-spacing: 0.08em; margin-bottom: 24px; }
+
+  .upi-app-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+  .upi-app-btn {
+    border: 1px solid var(--beige);
+    background: var(--white);
+    padding: 14px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-mid);
+  }
+  .upi-app-btn:hover, .upi-app-btn.sel { border-color: var(--gold); background: rgba(201,169,110,0.04); color: var(--forest); }
+  .upi-logo { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: var(--white); }
+
+  .card-visual {
+    background: linear-gradient(135deg, var(--forest) 0%, #0d1f15 100%);
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    min-height: 148px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-visual::before { content:''; position:absolute; top:-40px; right:-40px; width:160px; height:160px; border-radius:50%; background:rgba(201,169,110,0.07); }
+  .card-chip-el { width:36px; height:26px; background:var(--gold); border-radius:4px; margin-bottom:24px; opacity:0.9; }
+  .card-num-display { font-family:var(--serif); font-size:20px; font-weight:300; color:rgba(255,255,255,0.9); letter-spacing:0.22em; margin-bottom:18px; }
+  .card-bot { display:flex; justify-content:space-between; }
+  .card-bot-lbl { font-size:8px; letter-spacing:0.2em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-bottom:3px; }
+  .card-bot-val { font-size:13px; font-weight:300; color:rgba(255,255,255,0.85); letter-spacing:0.08em; }
+
+  .bank-grid-sm { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:16px; }
+  .bank-btn {
+    border:1px solid var(--beige);
+    padding:12px 14px;
+    cursor:pointer;
+    transition:all 0.25s;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:var(--sans);
+    font-size:12px;
+    font-weight:300;
+    color:var(--text-mid);
+    background:var(--white);
+  }
+  .bank-btn:hover, .bank-btn.sel { border-color:var(--gold); color:var(--forest); background:rgba(201,169,110,0.04); }
+  .bank-dot { width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--white);flex-shrink:0; }
+
+  .field-g { margin-bottom:16px; }
+  .field-g label { display:block;font-family:var(--sans);font-size:9px;font-weight:500;letter-spacing:0.25em;text-transform:uppercase;color:var(--text-light);margin-bottom:7px; }
+  .field-g input, .field-g select {
+    width:100%;border:1px solid var(--beige);background:var(--ivory);
+    padding:13px 16px;font-family:var(--sans);font-size:14px;font-weight:300;
+    color:var(--charcoal);outline:none;transition:border-color 0.3s;
+  }
+  .field-g input:focus, .field-g select:focus { border-color:var(--gold); box-shadow: 0 0 0 3px rgba(201,169,110,0.1); }
+  .field-row-2 { display:grid;grid-template-columns:1fr 1fr;gap:14px; }
+  .field-err { display:none;color:#c0392b;font-size:11px;font-weight:300;margin-top:8px;letter-spacing:0.05em; }
+
+  .pay-now-btn {
+    width:100%;background:var(--gold);color:var(--charcoal);border:none;
+    padding:19px;font-family:var(--sans);font-size:11px;font-weight:500;
+    letter-spacing:0.3em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;
+    display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px;
+    position:relative;overflow:hidden;
+  }
+  .pay-now-btn:hover { background:var(--gold-light);transform:translateY(-1px);box-shadow:0 12px 36px rgba(201,169,110,0.3); }
+  .pay-now-btn:disabled { opacity:0.55;cursor:not-allowed;transform:none; }
+  .pay-btn-spinner { display:none;width:16px;height:16px;border:2px solid rgba(28,28,26,0.25);border-top-color:var(--charcoal);border-radius:50%;animation:spin 0.7s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .pay-now-btn.loading .pay-btn-spinner { display:block; }
+  .pay-now-btn.loading .pay-btn-text { opacity:0.3; }
+
+  /* ── Processing ── */
+  .pay-processing {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(28,28,26,0.97);
+    z-index: 10;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+  .pay-processing.show { display: flex; }
+  .proc-ring { width:70px;height:70px;border:2px solid rgba(201,169,110,0.15);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite; }
+  .proc-title { font-family:var(--serif);font-size:22px;font-weight:300;color:var(--white);letter-spacing:0.04em; }
+  .proc-sub { font-family:var(--sans);font-size:10px;font-weight:300;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.3); }
+  .proc-steps-list { display:flex;flex-direction:column;gap:9px;margin-top:4px; }
+  .proc-step-item { display:flex;align-items:center;gap:11px;font-family:var(--sans);font-size:11px;font-weight:300;letter-spacing:0.08em;color:rgba(255,255,255,0.25);transition:color 0.5s; }
+  .proc-step-item.done { color:rgba(255,255,255,0.65); }
+  .proc-step-dot { width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.1);transition:background 0.5s;flex-shrink:0; }
+  .proc-step-item.done .proc-step-dot { background:var(--gold); }
+
+  /* ── Screen 3: Success ── */
+  .pay-success-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 60px 24px 80px;
+    min-height: 100%;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .success-ring {
+    width: 90px; height: 90px;
+    background: rgba(45,122,79,0.1);
+    border: 1.5px solid rgba(45,122,79,0.35);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 28px;
+    animation: popIn 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  @keyframes popIn { from{opacity:0;transform:scale(0.4)} to{opacity:1;transform:scale(1)} }
+  .suc-eyebrow { font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold);margin-bottom:14px; }
+  .suc-title { font-family:var(--serif);font-size:clamp(36px,5vw,56px);font-weight:300;color:var(--charcoal);line-height:1.05;margin-bottom:16px;animation:fadeUp 0.7s ease 0.2s both; }
+  .suc-title em { font-style:italic;color:var(--forest); }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  .suc-sub { font-family:var(--sans);font-size:14px;font-weight:300;color:var(--text-mid);line-height:1.8;max-width:420px;margin:0 auto 36px;animation:fadeUp 0.7s ease 0.35s both; }
+  .suc-ref-box { background:var(--forest);padding:18px 40px;margin-bottom:36px;animation:fadeUp 0.7s ease 0.45s both; }
+  .suc-ref-label { font-family:var(--sans);font-size:9px;letter-spacing:0.35em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:5px; }
+  .suc-ref-val { font-family:var(--serif);font-size:26px;font-weight:400;color:var(--gold);letter-spacing:0.12em; }
+  .suc-notifs { width:100%;display:flex;flex-direction:column;gap:10px;margin-bottom:36px;animation:fadeUp 0.7s ease 0.55s both; }
+  .suc-notif {
+    display:flex;align-items:center;gap:12px;
+    background:var(--white);border:1px solid var(--beige);
+    padding:14px 18px;text-align:left;transition:border-color 0.5s;
+  }
+  .suc-notif.sent { border-color:rgba(45,122,79,0.4); }
+  .suc-notif-icon { width:34px;height:34px;background:var(--cream);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0; }
+  .suc-notif-info { flex:1; }
+  .suc-notif-title { font-family:var(--sans);font-size:12px;font-weight:400;letter-spacing:0.08em;color:var(--charcoal);margin-bottom:2px; }
+  .suc-notif-status { font-family:var(--sans);font-size:10px;font-weight:300;color:var(--text-light);transition:color 0.5s; }
+  .suc-notif.sent .suc-notif-status { color:#2D7A4F; }
+  .suc-notif-check { font-size:16px;color:#2D7A4F;opacity:0;transition:opacity 0.5s; }
+  .suc-notif.sent .suc-notif-check { opacity:1; }
+  .suc-actions { display:flex;gap:14px;flex-wrap:wrap;justify-content:center;animation:fadeUp 0.7s ease 0.65s both; }
+  .suc-btn-p { background:var(--gold);color:var(--charcoal);border:none;padding:15px 36px;font-family:var(--sans);font-size:10px;font-weight:500;letter-spacing:0.3em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;text-decoration:none;display:inline-block; }
+  .suc-btn-p:hover { background:var(--gold-light); }
+  .suc-btn-o { background:transparent;color:var(--charcoal);border:1px solid var(--beige);padding:15px 36px;font-family:var(--sans);font-size:10px;font-weight:400;letter-spacing:0.3em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;text-decoration:none;display:inline-block; }
+  .suc-btn-o:hover { border-color:var(--gold);color:var(--forest); }
+
+  /* Mobile pay overlay */
+  @media (max-width: 768px) {
+    .pay-review-layout { grid-template-columns:1fr; padding:20px 16px; gap:16px; }
+    .pay-method-layout { grid-template-columns:1fr; padding:16px; gap:12px; }
+    .upi-app-grid { grid-template-columns:repeat(2,1fr); }
+    .field-row-2 { grid-template-columns:1fr; }
+    .bank-grid-sm { grid-template-columns:1fr; }
+    .pay-steps { padding:0 16px; }
+    .pay-step span { display:none; }
+    .pay-topbar { padding:14px 16px; }
+  }
 </style>
 </head>
 <body>
@@ -762,8 +1292,42 @@
     </div>
 
     <div class="booking-form fade-up">
-      <div class="form-title">Reserve Your Suite</div>
+      <div class="form-title">Reserve Your Stay</div>
       <div class="form-subtitle">Best rate guaranteed · No booking fees · Instant confirmation</div>
+
+      <!-- Room selector cards (Airbnb listing style) -->
+      <div class="form-group">
+        <label>Select Listing</label>
+        <div class="room-selector" id="roomSelector">
+          <div class="room-sel-card selected" data-room="Full Villa – Home Stay" data-price="8500" data-guests="8" onclick="selectRoom(this)">
+            <div class="rsc-top">
+              <div class="rsc-badge">Airbnb Listing</div>
+              <div class="rsc-price">₹8,500<span>/night</span></div>
+            </div>
+            <div class="rsc-name">Rahini Sunset Villa<br><span>Full Home Stay (Entire Villa)</span></div>
+            <div class="rsc-meta">🏠 Entire Villa &nbsp;·&nbsp; 👥 Up to 8 Guests &nbsp;·&nbsp; 🛏 3 Bedrooms</div>
+          </div>
+          <div class="room-sel-card" data-room="Sunset Room – Double Occupancy" data-price="3500" data-guests="2" onclick="selectRoom(this)">
+            <div class="rsc-top">
+              <div class="rsc-badge rsc-badge-alt">Private Room</div>
+              <div class="rsc-price">₹3,500<span>/night</span></div>
+            </div>
+            <div class="rsc-name">Sunset Room<br><span>Double Occupancy</span></div>
+            <div class="rsc-meta">🛏 1 Bedroom &nbsp;·&nbsp; 👥 Up to 2 Guests &nbsp;·&nbsp; 🪟 Valley View</div>
+          </div>
+          <div class="room-sel-card" data-room="Mountain View Room – Double Occupancy" data-price="3000" data-guests="2" onclick="selectRoom(this)">
+            <div class="rsc-top">
+              <div class="rsc-badge rsc-badge-alt">Private Room</div>
+              <div class="rsc-price">₹3,000<span>/night</span></div>
+            </div>
+            <div class="rsc-name">Mountain View Room<br><span>Double Occupancy</span></div>
+            <div class="rsc-meta">🛏 1 Bedroom &nbsp;·&nbsp; 👥 Up to 2 Guests &nbsp;·&nbsp; 🏔 Peak View</div>
+          </div>
+        </div>
+        <input type="hidden" id="selected-room" value="Full Villa – Home Stay">
+        <input type="hidden" id="selected-price" value="8500">
+      </div>
+
       <div class="form-row">
         <div class="form-group">
           <label>Check-In Date</label>
@@ -775,33 +1339,43 @@
         </div>
       </div>
       <div id="form-avail-status" class="form-avail-status"></div>
+
       <div class="form-group">
         <label>Guests</label>
-        <select><option>1 Guest</option><option selected>2 Guests</option><option>3 Guests</option></select>
+        <select id="form-guests">
+          <option>1 Guest</option>
+          <option selected>2 Guests</option>
+          <option>3 Guests</option>
+          <option>4 Guests</option>
+          <option>5 Guests</option>
+          <option>6 Guests</option>
+          <option>7 Guests</option>
+          <option>8 Guests</option>
+        </select>
       </div>
       <div class="form-row">
         <div class="form-group">
           <label>Full Name</label>
-          <input type="text" placeholder="Your full name">
+          <input type="text" id="form-name" placeholder="Your full name">
         </div>
         <div class="form-group">
           <label>Phone / WhatsApp</label>
-          <input type="tel" placeholder="+91 00000 00000">
+          <input type="tel" id="form-phone" placeholder="+91 00000 00000">
         </div>
       </div>
       <div class="form-group">
         <label>Email Address</label>
-        <input type="email" placeholder="your@email.com">
+        <input type="email" id="form-email" placeholder="your@email.com">
       </div>
       <div class="form-group">
         <label>Special Requests</label>
-        <textarea placeholder="Anniversary setup, dietary requirements, early check-in…"></textarea>
+        <textarea id="form-requests" placeholder="Anniversary setup, dietary requirements, early check-in…"></textarea>
       </div>
       <div class="form-payment">
         <div class="payment-title">Payment Option</div>
         <div class="payment-options">
-          <label class="payment-opt"><input type="radio" name="payment" checked> 50% Advance + Balance at Arrival</label>
-          <label class="payment-opt"><input type="radio" name="payment"> Full Payment Now (5% Discount)</label>
+          <label class="payment-opt"><input type="radio" name="payment" value="50% Advance" checked> 50% Advance + Balance at Arrival</label>
+          <label class="payment-opt"><input type="radio" name="payment" value="Full Payment"> Full Payment Now (5% Discount)</label>
         </div>
         <div class="payment-icons">
           <span class="payment-icon-badge">UPI</span>
@@ -812,7 +1386,7 @@
           <span class="payment-icon-badge">GPay</span>
         </div>
       </div>
-      <button class="form-submit" onclick="submitBooking(event)">Confirm Reservation →</button>
+      <button class="form-submit" onclick="submitBooking(event)">Proceed to Payment →</button>
     </div>
   </div>
 </section>
@@ -1131,6 +1705,273 @@
     window.location.href = '/payment.html?' + params.toString();
   }
 
+  // ── ROOM SELECTOR ──────────────────────────────────
+  function selectRoom(el) {
+    document.querySelectorAll('.room-sel-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('selected-room').value  = el.dataset.room;
+    document.getElementById('selected-price').value = el.dataset.price;
+  }
+
+  // ── SUBMIT → open payment overlay ──────────────────
+  function submitBooking(e) {
+    e.preventDefault();
+    const isModal = document.getElementById('modalOverlay').classList.contains('open');
+
+    let room, checkin, checkout, guests, name, phone, email, requests, paytype, pricePerNight;
+
+    if (isModal) {
+      const mi = document.querySelectorAll('#modalBox input[type="date"]');
+      room          = document.getElementById('modalRoomTitle').textContent.replace('Reserve: ','') || 'Full Villa – Home Stay';
+      checkin       = mi[0]?.value || '';
+      checkout      = mi[1]?.value || '';
+      guests        = document.querySelector('#modalBox select')?.value || '2 Guests';
+      name          = document.querySelector('#modalBox input[type="text"]')?.value || '';
+      phone         = document.querySelector('#modalBox input[type="tel"]')?.value  || '';
+      email         = '';
+      requests      = '';
+      paytype       = document.querySelector('#modalBox input[name="mpay"]:checked')?.parentElement?.textContent?.trim() || '50% Advance';
+      pricePerNight = 8500;
+    } else {
+      room          = document.getElementById('selected-room')?.value  || 'Full Villa – Home Stay';
+      pricePerNight = parseInt(document.getElementById('selected-price')?.value) || 8500;
+      checkin       = document.getElementById('form-checkin')?.value   || '';
+      checkout      = document.getElementById('form-checkout')?.value  || '';
+      guests        = document.getElementById('form-guests')?.value    || '2 Guests';
+      name          = document.getElementById('form-name')?.value      || '';
+      phone         = document.getElementById('form-phone')?.value     || '';
+      email         = document.getElementById('form-email')?.value     || '';
+      requests      = document.getElementById('form-requests')?.value  || '';
+      paytype       = document.querySelector('input[name="payment"]:checked')?.value || '50% Advance';
+    }
+
+    closeModal();
+
+    // Build booking data object
+    const nights = (checkin && checkout)
+      ? Math.max(1, Math.round((new Date(checkout) - new Date(checkin)) / 86400000))
+      : 1;
+    const totalFull  = pricePerNight * nights;
+    const isHalf     = paytype.includes('50%');
+    const amountDue  = isHalf ? Math.round(totalFull * 0.5) : Math.round(totalFull * 0.95);
+    const bookingRef = 'RSV-' + Date.now().toString().slice(-6);
+
+    window._booking = { room, checkin, checkout, guests, name, phone, email, requests,
+      paytype, nights, pricePerNight, totalFull, amountDue, bookingRef, isHalf };
+
+    openPayOverlay();
+  }
+
+  // ── PAYMENT OVERLAY ────────────────────────────────
+  function openPayOverlay() {
+    populateReviewScreen();
+    updatePaySteps(1);
+    showPayScreen(1);
+    document.getElementById('payOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    window.scrollTo(0,0);
+  }
+
+  function closePayOverlay() {
+    document.getElementById('payOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function showPayScreen(n) {
+    document.querySelectorAll('.pay-screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('payScreen' + n).classList.add('active');
+    document.getElementById('payOverlay').querySelector('.pay-body').scrollTop = 0;
+  }
+
+  function updatePaySteps(active) {
+    document.querySelectorAll('.pay-step').forEach((s, i) => {
+      s.classList.remove('active','done');
+      if (i + 1 === active) s.classList.add('active');
+      else if (i + 1 < active) s.classList.add('done');
+    });
+  }
+
+  function fmtDate(d) {
+    if (!d) return '—';
+    return new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+  }
+  function fmtINR(n) { return '₹' + n.toLocaleString('en-IN'); }
+
+  function populateReviewScreen() {
+    const b = window._booking;
+    document.getElementById('rv-room').textContent     = b.room;
+    document.getElementById('rv-checkin').textContent  = fmtDate(b.checkin);
+    document.getElementById('rv-checkout').textContent = fmtDate(b.checkout);
+    document.getElementById('rv-nights').textContent   = b.nights + (b.nights===1?' night':' nights');
+    document.getElementById('rv-guests').textContent   = b.guests;
+    document.getElementById('rv-name').textContent     = b.name  || '—';
+    document.getElementById('rv-phone').textContent    = b.phone || '—';
+    document.getElementById('rv-requests').textContent = b.requests || 'None';
+    const rate = fmtINR(b.pricePerNight) + ' × ' + b.nights + (b.nights===1?' night':' nights');
+    document.getElementById('rv-rate').textContent     = rate;
+    document.getElementById('rv-total').textContent    = fmtINR(b.totalFull);
+    document.getElementById('rv-paytype').textContent  = b.paytype;
+    document.getElementById('rv-amtdue').textContent   = fmtINR(b.amountDue);
+    document.getElementById('rv-amtdue-btn').textContent = 'Pay ' + fmtINR(b.amountDue) + ' Now  →';
+    // Also update total2 and sidebar amount
+    const t2 = document.getElementById('rv-total2');
+    if (t2) t2.textContent = fmtINR(b.totalFull);
+    const pmAmt = document.getElementById('pm-amtdue');
+    if (pmAmt) pmAmt.textContent = fmtINR(b.amountDue);
+    const noteEl = document.getElementById('rv-amtnote');
+    noteEl.textContent = b.isHalf
+      ? '50% advance · ' + fmtINR(b.totalFull - b.amountDue) + ' balance at check-in'
+      : 'Full payment · 5% discount applied';
+  }
+
+  // Screen 1 → 2
+  function proceedToPayment() {
+    updatePaySteps(2);
+    showPayScreen(2);
+    // Update pay button amount
+    document.querySelectorAll('.pay-btn-text').forEach(el => {
+      el.textContent = 'Pay ' + fmtINR(window._booking.amountDue) + ' Securely  →';
+    });
+  }
+
+  // ── Payment Method switching ──
+  function switchPayMethod(method, btn) {
+    document.querySelectorAll('.pay-method-option').forEach(o => o.classList.remove('active'));
+    document.querySelectorAll('.pay-method-pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('pane-' + method).classList.add('active');
+    window._payMethod = method;
+    window._selectedBank = '';
+    window._selectedUpi  = '';
+  }
+
+  function selUpiApp(btn, app) {
+    document.querySelectorAll('.upi-app-btn').forEach(b => b.classList.remove('sel'));
+    btn.classList.add('sel');
+    window._selectedUpi = app;
+  }
+
+  function selBank(btn, bank) {
+    const parent = btn.closest('.pay-method-pane');
+    parent.querySelectorAll('.bank-btn').forEach(b => b.classList.remove('sel'));
+    btn.classList.add('sel');
+    window._selectedBank = bank;
+  }
+
+  // Live card preview
+  function fmtCardNum(el) {
+    let v = el.value.replace(/\D/g,'').substring(0,16);
+    el.value = v.replace(/(.{4})/g,'$1 ').trim();
+    const disp = v.padEnd(16,'•').replace(/(.{4})/g,'$1 ').trim();
+    document.getElementById('cardNumDisp').textContent = disp;
+  }
+  function fmtCardExp(el) {
+    let v = el.value.replace(/\D/g,'').substring(0,4);
+    if(v.length >= 2) v = v.substring(0,2) + ' / ' + v.substring(2);
+    el.value = v;
+    document.getElementById('cardExpDisp').textContent = v || 'MM / YY';
+  }
+
+  // ── Validate & Pay ──────────────────────────────────
+  function validateAndPay(method) {
+    const errCard = document.getElementById('errCard');
+    const errUpi  = document.getElementById('errUpi');
+    const errBank = document.getElementById('errBank');
+    const errWal  = document.getElementById('errWal');
+    [errCard,errUpi,errBank,errWal].forEach(e => { if(e) e.style.display='none'; });
+
+    if (method === 'card') {
+      const num  = document.getElementById('cNum')?.value.replace(/\s/g,'') || '';
+      const name = document.getElementById('cName')?.value.trim() || '';
+      const exp  = document.getElementById('cExp')?.value.trim() || '';
+      const cvv  = document.getElementById('cCvv')?.value.trim() || '';
+      if (num.length < 16 || !name || exp.length < 7 || cvv.length < 3) {
+        errCard.style.display='block'; return false;
+      }
+    }
+    if (method === 'upi') {
+      const upiId = document.getElementById('upiIdInput')?.value.trim() || '';
+      if (!window._selectedUpi && !upiId) { errUpi.style.display='block'; return false; }
+    }
+    if (method === 'netbanking' && !window._selectedBank) { errBank.style.display='block'; return false; }
+    if (method === 'wallet'     && !window._selectedBank) { errWal.style.display='block'; return false; }
+    return true;
+  }
+
+  function initiatePayment(method) {
+    if (!validateAndPay(method)) return;
+
+    // Show processing overlay
+    const proc = document.getElementById('payProcessing');
+    proc.classList.add('show');
+    const steps = ['ps1','ps2','ps3','ps4'];
+    steps.forEach((id, i) => setTimeout(() => document.getElementById(id).classList.add('done'), 600 + i*700));
+
+    setTimeout(() => {
+      proc.classList.remove('show');
+      updatePaySteps(3);
+      showPayScreen(3);
+      fireNotifications();
+    }, 4000);
+  }
+
+  // ── Notifications ───────────────────────────────────
+  function fireNotifications() {
+    const b = window._booking;
+    // Set ref
+    document.getElementById('suc-ref').textContent = b.bookingRef;
+
+    setTimeout(() => {
+      const n1 = document.getElementById('suc-notif-email');
+      n1.classList.add('sent');
+      document.getElementById('suc-notif-email-status').textContent =
+        b.email ? 'Sent to ' + b.email : 'Confirmation email sent';
+    }, 700);
+
+    setTimeout(() => {
+      const n2 = document.getElementById('suc-notif-mobile');
+      n2.classList.add('sent');
+      document.getElementById('suc-notif-mobile-status').textContent =
+        'Notification sent to ' + (b.phone || 'your mobile');
+      // Browser push
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('🏔 Booking Confirmed — Rahini Sunset Villa', {
+          body: b.room + ' · ' + b.bookingRef + ' · We look forward to hosting you!',
+          tag: 'rahini-booking'
+        });
+      }
+    }, 1500);
+
+    setTimeout(() => {
+      const n3 = document.getElementById('suc-notif-wa');
+      n3.classList.add('sent');
+      document.getElementById('suc-notif-wa-status').textContent = 'Villa team notified via WhatsApp';
+      const msg = encodeURIComponent(
+`🏔 *NEW BOOKING — RAHINI SUNSET VILLA*
+
+📋 *Ref:* ${b.bookingRef}
+🏠 *Listing:* ${b.room}
+📅 *Check-In:* ${fmtDate(b.checkin)}
+📅 *Check-Out:* ${fmtDate(b.checkout)}
+🌙 *Nights:* ${b.nights}
+👤 *Guest:* ${b.name || 'N/A'}
+📞 *Phone:* ${b.phone || 'N/A'}
+✉️ *Email:* ${b.email || 'N/A'}
+👥 *Guests:* ${b.guests}
+💰 *Paid:* ${fmtINR(b.amountDue)} (${b.paytype})
+📝 *Requests:* ${b.requests || 'None'}
+
+Please confirm with guest ✅`);
+      const wa = window.open('https://wa.me/917018669092?text=' + msg, '_blank');
+      if (wa) wa.blur();
+    }, 2400);
+
+    // Notification permission
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }
+
   // SMOOTH SCROLL
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
@@ -1139,5 +1980,355 @@
     });
   });
 </script>
+
+<!-- ══════════════════════════════════════════════════════
+     MMT-STYLE FULL-SCREEN PAYMENT OVERLAY
+     Completely embedded — zero 404 risk
+══════════════════════════════════════════════════════ -->
+<div id="payOverlay">
+
+  <!-- Processing screen (full overlay within overlay) -->
+  <div id="payProcessing" class="pay-processing">
+    <div class="proc-ring"></div>
+    <div class="proc-title">Processing Payment</div>
+    <div class="proc-sub">Please do not close this window</div>
+    <div class="proc-steps-list">
+      <div class="proc-step-item" id="ps1"><div class="proc-step-dot"></div>Verifying payment details</div>
+      <div class="proc-step-item" id="ps2"><div class="proc-step-dot"></div>Authorising transaction</div>
+      <div class="proc-step-item" id="ps3"><div class="proc-step-dot"></div>Confirming reservation</div>
+      <div class="proc-step-item" id="ps4"><div class="proc-step-dot"></div>Sending confirmations</div>
+    </div>
+  </div>
+
+  <!-- Topbar -->
+  <div class="pay-topbar">
+    <div class="pay-topbar-left">
+      <button class="pay-back-btn" onclick="closePayOverlay()">&#8592;</button>
+      <span class="pay-topbar-title">Rahini Sunset Villa</span>
+    </div>
+    <div class="pay-secure-badge">
+      <div class="pay-secure-dot"></div>
+      SSL Secured
+    </div>
+  </div>
+
+  <!-- Step indicator -->
+  <div class="pay-steps">
+    <div class="pay-step active" id="payStep1">
+      <div class="pay-step-num">1</div>
+      <span>Review</span>
+    </div>
+    <div class="pay-step" id="payStep2">
+      <div class="pay-step-num">2</div>
+      <span>Payment</span>
+    </div>
+    <div class="pay-step" id="payStep3">
+      <div class="pay-step-num">3</div>
+      <span>Confirmed</span>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="pay-body">
+
+    <!-- ── SCREEN 1: REVIEW BOOKING ── -->
+    <div class="pay-screen active" id="payScreen1">
+      <div class="pay-review-layout">
+
+        <!-- Left: Booking details -->
+        <div>
+          <div class="pay-card">
+            <div class="pay-card-title">Booking Details</div>
+            <div class="pay-detail-row">
+              <span class="pay-detail-key">Listing / Room</span>
+              <span class="pay-detail-val" id="rv-room">—</span>
+            </div>
+            <div class="pay-detail-row">
+              <span class="pay-detail-key">Check-In</span>
+              <span class="pay-detail-val" id="rv-checkin">—</span>
+            </div>
+            <div class="pay-detail-row">
+              <span class="pay-detail-key">Check-Out</span>
+              <span class="pay-detail-val" id="rv-checkout">—</span>
+            </div>
+            <div class="pay-detail-row">
+              <span class="pay-detail-key">Duration</span>
+              <span class="pay-detail-val" id="rv-nights">—</span>
+            </div>
+            <div class="pay-detail-row">
+              <span class="pay-detail-key">Guests</span>
+              <span class="pay-detail-val" id="rv-guests">—</span>
+            </div>
+          </div>
+
+          <div class="pay-card">
+            <div class="pay-card-title">Guest Information</div>
+            <div class="pay-detail-row">
+              <span class="pay-detail-key">Name</span>
+              <span class="pay-detail-val" id="rv-name">—</span>
+            </div>
+            <div class="pay-detail-row">
+              <span class="pay-detail-key">Phone</span>
+              <span class="pay-detail-val" id="rv-phone">—</span>
+            </div>
+            <div class="pay-detail-row">
+              <span class="pay-detail-key">Special Requests</span>
+              <span class="pay-detail-val" id="rv-requests">None</span>
+            </div>
+          </div>
+
+          <div class="pay-card">
+            <div class="pay-card-title">Cancellation Policy</div>
+            <p style="font-family:var(--sans);font-size:13px;font-weight:300;color:var(--text-mid);line-height:1.8;">Free cancellation up to 48 hours before check-in. After that, the advance amount is non-refundable. Full amount charged for no-shows.</p>
+          </div>
+        </div>
+
+        <!-- Right: Price summary + CTA -->
+        <div>
+          <div class="pay-card">
+            <div class="pay-card-title">Price Summary</div>
+            <div class="pay-price-breakdown">
+              <div class="pay-price-row">
+                <span id="rv-rate">—</span>
+                <span id="rv-total">—</span>
+              </div>
+              <div class="pay-price-row">
+                <span>Taxes &amp; Fees</span>
+                <span style="color:var(--forest);font-size:11px;">Included</span>
+              </div>
+              <div class="pay-price-row">
+                <span>Platform Fee</span>
+                <span style="color:var(--forest);font-size:11px;">₹0 (Book Direct)</span>
+              </div>
+              <div class="pay-price-row total">
+                <span>Total Stay</span>
+                <span id="rv-total2"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pay-card" style="background:var(--forest);border-color:var(--forest-mid);">
+            <div style="font-family:var(--sans);font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:4px;" id="rv-paytype">—</div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+              <div>
+                <div style="font-family:var(--sans);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:4px;">Amount Due Today</div>
+                <div style="font-family:var(--serif);font-size:36px;font-weight:300;color:var(--white);line-height:1;" id="rv-amtdue">—</div>
+                <div style="font-family:var(--sans);font-size:10px;font-weight:300;color:rgba(255,255,255,0.35);margin-top:4px;" id="rv-amtnote"></div>
+              </div>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(201,169,110,0.4)" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </div>
+          </div>
+
+          <button class="pay-proceed-btn" onclick="proceedToPayment()">
+            <span id="rv-amtdue-btn">Proceed to Payment →</span>
+          </button>
+
+          <div class="pay-trust-row">
+            <div class="pay-trust-item">🔒 Secure checkout</div>
+            <div class="pay-trust-item">✅ Instant confirmation</div>
+            <div class="pay-trust-item">🔄 48hr free cancellation</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 2: PAYMENT METHOD ── -->
+    <div class="pay-screen" id="payScreen2">
+      <div class="pay-method-layout">
+
+        <!-- Sidebar: method selector -->
+        <div class="pay-method-sidebar">
+          <div style="font-family:var(--sans);font-size:9px;font-weight:500;letter-spacing:0.3em;text-transform:uppercase;color:var(--text-light);margin-bottom:12px;">Payment Method</div>
+          <div class="pay-method-option active" onclick="switchPayMethod('card',this)">
+            <div class="pay-method-icon">💳</div> Credit / Debit Card
+          </div>
+          <div class="pay-method-option" onclick="switchPayMethod('upi',this)">
+            <div class="pay-method-icon">📱</div> UPI
+          </div>
+          <div class="pay-method-option" onclick="switchPayMethod('netbanking',this)">
+            <div class="pay-method-icon">🏦</div> Net Banking
+          </div>
+          <div class="pay-method-option" onclick="switchPayMethod('wallet',this)">
+            <div class="pay-method-icon">👝</div> Wallet
+          </div>
+
+          <!-- Mini price reminder -->
+          <div style="background:var(--cream);border:1px solid var(--beige);padding:16px;margin-top:16px;">
+            <div style="font-family:var(--sans);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-light);margin-bottom:6px;">Paying Today</div>
+            <div style="font-family:var(--serif);font-size:24px;font-weight:400;color:var(--forest);" id="pm-amtdue">—</div>
+          </div>
+        </div>
+
+        <!-- Payment panes -->
+        <div class="pay-method-content">
+
+          <!-- CARD -->
+          <div class="pay-method-pane active" id="pane-card">
+            <div class="pm-title">Card Payment</div>
+            <div class="pm-sub">Visa · Mastercard · RuPay · Amex · All major cards accepted</div>
+            <div class="card-visual">
+              <div class="card-chip-el"></div>
+              <div class="card-num-display" id="cardNumDisp">•••• •••• •••• ••••</div>
+              <div class="card-bot">
+                <div>
+                  <div class="card-bot-lbl">Card Holder</div>
+                  <div class="card-bot-val" id="cardNameDisp">YOUR NAME</div>
+                </div>
+                <div>
+                  <div class="card-bot-lbl">Expires</div>
+                  <div class="card-bot-val" id="cardExpDisp">MM / YY</div>
+                </div>
+              </div>
+            </div>
+            <div class="field-g">
+              <label>Card Number</label>
+              <input id="cNum" type="text" maxlength="19" placeholder="1234 5678 9012 3456" oninput="fmtCardNum(this)" autocomplete="cc-number">
+            </div>
+            <div class="field-g">
+              <label>Name on Card</label>
+              <input id="cName" type="text" placeholder="As printed on card" oninput="document.getElementById('cardNameDisp').textContent=this.value.toUpperCase()||'YOUR NAME'" autocomplete="cc-name">
+            </div>
+            <div class="field-row-2">
+              <div class="field-g">
+                <label>Expiry</label>
+                <input id="cExp" type="text" maxlength="7" placeholder="MM / YY" oninput="fmtCardExp(this)" autocomplete="cc-exp">
+              </div>
+              <div class="field-g">
+                <label>CVV</label>
+                <input id="cCvv" type="password" maxlength="4" placeholder="•••" autocomplete="cc-csc">
+              </div>
+            </div>
+            <div class="field-err" id="errCard">Please fill in all card details correctly.</div>
+            <button class="pay-now-btn" onclick="initiatePayment('card')">
+              <div class="pay-btn-spinner"></div>
+              <span class="pay-btn-text">Pay Securely →</span>
+            </button>
+          </div>
+
+          <!-- UPI -->
+          <div class="pay-method-pane" id="pane-upi">
+            <div class="pm-title">UPI Payment</div>
+            <div class="pm-sub">Instant · Free · Works on all UPI apps</div>
+            <div class="upi-app-grid">
+              <div class="upi-app-btn" onclick="selUpiApp(this,'PhonePe')">
+                <div class="upi-logo" style="background:#5F259F;">𝑷</div>PhonePe
+              </div>
+              <div class="upi-app-btn" onclick="selUpiApp(this,'GPay')">
+                <div class="upi-logo" style="background:#4285F4;">G</div>GPay
+              </div>
+              <div class="upi-app-btn" onclick="selUpiApp(this,'Paytm')">
+                <div class="upi-logo" style="background:#00BAF2;">𝑷</div>Paytm
+              </div>
+              <div class="upi-app-btn" onclick="selUpiApp(this,'BHIM')">
+                <div class="upi-logo" style="background:#FF6600;">B</div>BHIM
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+              <div style="flex:1;height:1px;background:var(--beige);"></div>
+              <span style="font-family:var(--sans);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-light);">or enter UPI ID</span>
+              <div style="flex:1;height:1px;background:var(--beige);"></div>
+            </div>
+            <div class="field-g">
+              <label>UPI ID / VPA</label>
+              <input id="upiIdInput" type="text" placeholder="yourname@upi">
+            </div>
+            <div class="field-err" id="errUpi">Please select a UPI app or enter your UPI ID.</div>
+            <button class="pay-now-btn" onclick="initiatePayment('upi')">
+              <div class="pay-btn-spinner"></div>
+              <span class="pay-btn-text">Verify &amp; Pay →</span>
+            </button>
+          </div>
+
+          <!-- NET BANKING -->
+          <div class="pay-method-pane" id="pane-netbanking">
+            <div class="pm-title">Net Banking</div>
+            <div class="pm-sub">All major Indian banks supported</div>
+            <div class="bank-grid-sm">
+              <div class="bank-btn" onclick="selBank(this,'SBI')"><div class="bank-dot" style="background:#2D60A4;">SBI</div>State Bank of India</div>
+              <div class="bank-btn" onclick="selBank(this,'HDFC')"><div class="bank-dot" style="background:#004C8F;">HD</div>HDFC Bank</div>
+              <div class="bank-btn" onclick="selBank(this,'ICICI')"><div class="bank-dot" style="background:#F58220;">IC</div>ICICI Bank</div>
+              <div class="bank-btn" onclick="selBank(this,'Axis')"><div class="bank-dot" style="background:#97144D;">AX</div>Axis Bank</div>
+              <div class="bank-btn" onclick="selBank(this,'Kotak')"><div class="bank-dot" style="background:#ED1C24;">KO</div>Kotak Bank</div>
+              <div class="bank-btn" onclick="selBank(this,'PNB')"><div class="bank-dot" style="background:#004A24;">PN</div>Punjab National</div>
+            </div>
+            <div class="field-err" id="errBank">Please select your bank.</div>
+            <button class="pay-now-btn" onclick="initiatePayment('netbanking')">
+              <div class="pay-btn-spinner"></div>
+              <span class="pay-btn-text">Proceed to Bank →</span>
+            </button>
+          </div>
+
+          <!-- WALLET -->
+          <div class="pay-method-pane" id="pane-wallet">
+            <div class="pm-title">Wallet</div>
+            <div class="pm-sub">Pay using your digital wallet balance</div>
+            <div class="bank-grid-sm">
+              <div class="bank-btn" onclick="selBank(this,'Paytm')"><div class="bank-dot" style="background:#00BAF2;">𝑷</div>Paytm Wallet</div>
+              <div class="bank-btn" onclick="selBank(this,'Amazon')"><div class="bank-dot" style="background:#FF9900;">A</div>Amazon Pay</div>
+              <div class="bank-btn" onclick="selBank(this,'Mobikwik')"><div class="bank-dot" style="background:#2B2D7E;">M</div>MobiKwik</div>
+              <div class="bank-btn" onclick="selBank(this,'Freecharge')"><div class="bank-dot" style="background:#00C1D4;">FC</div>Freecharge</div>
+            </div>
+            <div class="field-err" id="errWal">Please select a wallet.</div>
+            <button class="pay-now-btn" onclick="initiatePayment('wallet')">
+              <div class="pay-btn-spinner"></div>
+              <span class="pay-btn-text">Pay from Wallet →</span>
+            </button>
+          </div>
+
+          <p style="text-align:center;font-family:var(--sans);font-size:10px;font-weight:300;color:var(--text-light);letter-spacing:0.08em;margin-top:16px;">🔒 256-bit SSL encrypted · Your payment info is never stored</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SCREEN 3: BOOKING CONFIRMED ── -->
+    <div class="pay-screen" id="payScreen3">
+      <div class="pay-success-screen">
+        <div class="success-ring">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <polyline points="7,20 16,29 33,11" stroke="#2D7A4F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="suc-eyebrow">Booking Confirmed</div>
+        <h2 class="suc-title">Your Escape<br><em>Awaits You</em></h2>
+        <p class="suc-sub">Your reservation at Rahini Sunset Villa is confirmed. We are looking forward to welcoming you to the mountains.</p>
+        <div class="suc-ref-box">
+          <div class="suc-ref-label">Booking Reference</div>
+          <div class="suc-ref-val" id="suc-ref">RSV-000000</div>
+        </div>
+        <div class="suc-notifs">
+          <div class="suc-notif" id="suc-notif-email">
+            <div class="suc-notif-icon">✉️</div>
+            <div class="suc-notif-info">
+              <div class="suc-notif-title">Confirmation Email</div>
+              <div class="suc-notif-status" id="suc-notif-email-status">Sending to your email…</div>
+            </div>
+            <div class="suc-notif-check">✓</div>
+          </div>
+          <div class="suc-notif" id="suc-notif-mobile">
+            <div class="suc-notif-icon">📱</div>
+            <div class="suc-notif-info">
+              <div class="suc-notif-title">Mobile Notification</div>
+              <div class="suc-notif-status" id="suc-notif-mobile-status">Sending to your phone…</div>
+            </div>
+            <div class="suc-notif-check">✓</div>
+          </div>
+          <div class="suc-notif" id="suc-notif-wa">
+            <div class="suc-notif-icon">💬</div>
+            <div class="suc-notif-info">
+              <div class="suc-notif-title">WhatsApp Alert (Host)</div>
+              <div class="suc-notif-status" id="suc-notif-wa-status">Alerting villa team…</div>
+            </div>
+            <div class="suc-notif-check">✓</div>
+          </div>
+        </div>
+        <div class="suc-actions">
+          <button class="suc-btn-p" onclick="closePayOverlay()">Back to Villa Website</button>
+          <button class="suc-btn-o" onclick="window.print()">Download Receipt</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /pay-body -->
+</div><!-- /payOverlay -->-e 
 </body>
 </html>
