@@ -1,39 +1,30 @@
-# ─────────────────────────────────────────────────────────────────
-# Rahini Sunset Villa — Netlify Configuration
-# Domain: www.rahinisunsetvilla.com
-# ─────────────────────────────────────────────────────────────────
-
 [build]
-  publish = "."        # Root folder is published as-is
+  publish = "."
 
-# ── Clean URL routing ──────────────────────────────────────────────
-# / → index.html (main villa website)
-# /payment → payment.html
-[[redirects]]
-  from   = "/payment"
-  to     = "/payment.html"
-  status = 200
-  force  = true
-
-# Redirect non-www → www
-[[redirects]]
-  from   = "https://rahinisunsetvilla.com/*"
-  to     = "https://www.rahinisunsetvilla.com/:splat"
-  status = 301
-  force  = true
-
-# ── Security headers ──────────────────────────────────────────────
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options        = "DENY"
-    X-XSS-Protection       = "1; mode=block"
+    X-Frame-Options = "SAMEORIGIN"
     X-Content-Type-Options = "nosniff"
-    Referrer-Policy        = "strict-origin-when-cross-origin"
-    Permissions-Policy     = "camera=(), microphone=(), geolocation=()"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
 
-# Cache static assets for 1 year
-[[headers]]
-  for = "/*.html"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
+# Force HTTPS + canonical www domain
+[[redirects]]
+  from = "https://rahinisunsetvilla.com/*"
+  to = "https://www.rahinisunsetvilla.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://rahinisunsetvilla.com/*"
+  to = "https://www.rahinisunsetvilla.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.rahinisunsetvilla.com/*"
+  to = "https://www.rahinisunsetvilla.com/:splat"
+  status = 301
+  force = true
