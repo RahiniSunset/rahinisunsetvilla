@@ -10,21 +10,13 @@
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
 
-# Force HTTPS + canonical www domain
-[[redirects]]
-  from = "https://rahinisunsetvilla.com/*"
-  to = "https://www.rahinisunsetvilla.com/:splat"
-  status = 301
-  force = true
+# Cache static assets aggressively so images load fast
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
 
-[[redirects]]
-  from = "http://rahinisunsetvilla.com/*"
-  to = "https://www.rahinisunsetvilla.com/:splat"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "http://www.rahinisunsetvilla.com/*"
-  to = "https://www.rahinisunsetvilla.com/:splat"
-  status = 301
-  force = true
+# NOTE: www <-> apex redirects are handled by Netlify's "Primary domain" setting
+# (Site settings -> Domain management -> set one as primary). Do NOT add manual
+# redirects here — they cause ERR_TOO_MANY_REDIRECTS when combined with
+# Netlify's built-in handling.
